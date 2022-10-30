@@ -1,0 +1,29 @@
+{
+    "name": "otp-project-terminal-life",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "build": "tsc",
+        "eslint": "eslint",
+        "lint:nofix": "tsc --noEmit && eslint 'src/**/*.{js,ts}'",
+        "lint": "tsc --noEmit && eslint --fix 'src/**/*.{js,ts}'",
+        "jest": "jest",
+        "ts-node": "ts-node",
+        "dev": "npm-run-all build && nodemon",
+        "start": "ts-node dist/index.js",
+        "test": "npm-run-all lint:nofix jest",
+        "test:unit": "npm-run-all test --testPathPattern 'unit/.*'"
+    },
+    "keywords": [],
+    "author": "charliejuc@gmail.com",
+    "license": "MIT",
+    "devDependencies": {
+        "eslint": "8.26.0",
+        "nodemon": "2.0.20",
+        "ts-node": "10.9.1"
+    },
+    "dependencies": {
+        "npm-run-all": "4.1.5"
+    }
+}
