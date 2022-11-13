@@ -1,27 +1,26 @@
-const sieveOfEratosthenes = (n: number, options: { start: number } = { start: 0 }) => {
-    const primesFlag: Record<number, number> = {}
-    const first = 3
+import crypto from 'crypto'
 
-    primesFlag[0] = 1
-    for (let i = first; i ** 2 <= n; i += 2) {
-        if (primesFlag[Math.floor(i / 2)] === 1) {
-            continue
-        }
+// const bytes = crypto.randomBytes(2048)
+// const number = bytes.readBigUInt64BE()
 
-        for (let j = first * i; j <= n; j += 2 * i) {
-            primesFlag[Math.floor(j / 2)] = 1
-        }
-    }
+// console.log(bytes.readBigUInt64BE())
+// console.log(number)
 
-    const start = options.start > first ? options.start : first
-    const primes = options.start > 3 ? [] : [2].filter((n) => n > options.start)
-    for (let i = start; i <= n; i++) {
-        if (i % 2 === 1 && primesFlag[Math.floor(i / 2)] !== 1) {
-            primes.push(i)
-        }
-    }
+// ! DOC: https://www.geeksforgeeks.org/how-to-generate-large-prime-numbers-for-rsa-algorithm/
 
-    return primes
+function randomNumberOfNBits(n: number) {
+    // Returns a random number
+    // between 2**(n-1)+1 and 2**n-1'''
+    const max = BigInt(2) ** BigInt(n) - BigInt(1)
+    const min = BigInt(2) ** BigInt(n - 1) + BigInt(1)
+    const randomMultiplier = 100000000
+    const random = BigInt(Math.floor(Math.random() * randomMultiplier))
+
+    return (random * (max - min) + min) / BigInt(randomMultiplier)
 }
 
-console.log(sieveOfEratosthenes(100002000, { start: 100001000 }))
+console.log(randomNumberOfNBits(4096))
+
+// This code is contributed by phasing17.
+
+// console.log(crypto.generatePrimeSync(4096))
