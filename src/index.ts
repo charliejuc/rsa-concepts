@@ -1,26 +1,41 @@
 import crypto from 'crypto'
+import { isPrime } from './isPrime'
 
-// const bytes = crypto.randomBytes(2048)
-// const number = bytes.readBigUInt64BE()
+const randomNumberOfNBits = (bits: number) => {
+    const bytes = bits / 8
 
-// console.log(bytes.readBigUInt64BE())
-// console.log(number)
+    const _randomNumber = (): bigint => {
+        const randomBigInt = BigInt(`0x${crypto.randomBytes(bytes).toString('hex')}`)
 
-// ! DOC: https://www.geeksforgeeks.org/how-to-generate-large-prime-numbers-for-rsa-algorithm/
+        // less significant bit to 1 to get only odd numbers
+        return randomBigInt | BigInt(1)
+    }
 
-function randomNumberOfNBits(n: number) {
-    // Returns a random number
-    // between 2**(n-1)+1 and 2**n-1'''
-    const max = BigInt(2) ** BigInt(n) - BigInt(1)
-    const min = BigInt(2) ** BigInt(n - 1) + BigInt(1)
-    const randomMultiplier = 100000000
-    const random = BigInt(Math.floor(Math.random() * randomMultiplier))
-
-    return (random * (max - min) + min) / BigInt(randomMultiplier)
+    return _randomNumber
 }
 
-console.log(randomNumberOfNBits(4096))
+let prime: bigint | null = null
+const bits = 2048
+const _randomNumberOfNBits = randomNumberOfNBits(bits)
+let tries = 0
+const maxTries = 10_000
+let candidate = _randomNumberOfNBits()
+while (true) {
+    if (isPrime(candidate, 128)) {
+        prime = candidate
+        break
+    }
 
-// This code is contributed by phasing17.
+    if (tries > maxTries) {
+        tries = 0
+        candidate = _randomNumberOfNBits()
+        continue
+    }
 
-// console.log(crypto.generatePrimeSync(4096))
+    candidate = candidate + BigInt(2)
+    ++tries
+}
+
+console.log(prime)
+
+// console.log(crypto.generatePrimeSync(4096, { bigint: true, safe: true }))
