@@ -1,41 +1,21 @@
-import crypto from 'crypto'
-import { isPrime } from './isPrime'
+import { generateRandomPrimeNumber } from './prime'
 
-const randomNumberOfNBits = (bits: number) => {
-    const bytes = bits / 8
+const p = generateRandomPrimeNumber({ bits: 256 })
+const q = generateRandomPrimeNumber({ bits: 256 })
 
-    const _randomNumber = (): bigint => {
-        const randomBigInt = BigInt(`0x${crypto.randomBytes(bytes).toString('hex')}`)
+console.log({ p, q })
 
-        // less significant bit to 1 to get only odd numbers
-        return randomBigInt | BigInt(1)
-    }
+const n = p * q
+// const fiN = (p - BigInt(1)) * (q - BigInt(1))
+// standard 65637, we can use any number with greatest common divisor(gcd) between e and fiN => ϕ(n)
+const e = BigInt(65_637)
 
-    return _randomNumber
+console.log({ e, n })
+
+const generatePublicKeyRaw = (e: bigint, n: bigint) => {
+    return e * n
 }
 
-let prime: bigint | null = null
-const bits = 2048
-const _randomNumberOfNBits = randomNumberOfNBits(bits)
-let tries = 0
-const maxTries = 10_000
-let candidate = _randomNumberOfNBits()
-while (true) {
-    if (isPrime(candidate, 128)) {
-        prime = candidate
-        break
-    }
+const publicKeyRaw = generatePublicKeyRaw(e, n)
 
-    if (tries > maxTries) {
-        tries = 0
-        candidate = _randomNumberOfNBits()
-        continue
-    }
-
-    candidate = candidate + BigInt(2)
-    ++tries
-}
-
-console.log(prime)
-
-// console.log(crypto.generatePrimeSync(4096, { bigint: true, safe: true }))
+console.log({ publicKeyRaw })
